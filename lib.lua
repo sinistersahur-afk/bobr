@@ -85,6 +85,7 @@
         preset = {
             outline = rgb(6, 6, 9),
             inline = rgb(26, 26, 33),
+            border = rgb(46, 46, 57),
             text = rgb(196, 196, 206),
             text_outline = rgb(0, 0, 0),
             background = rgb(13, 13, 17),
@@ -94,7 +95,10 @@
 
         utility = {
             inline = {
-                BackgroundColor3 = {} 	
+                BackgroundColor3 = {}
+            },
+            border = {
+                BackgroundColor3 = {}
             },
             text = {
                 TextColor3 = {}	
@@ -547,31 +551,6 @@
                 library:resizify(window_outline)
                 library:draggify(window_outline)
                 
-                local title_holder = library:create("Frame", {
-                    Parent = window_outline;
-                    BackgroundTransparency = 0.25;
-                    Position = dim2(0, 2, 0, 2);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -4, 0, 18);
-                    BorderSizePixel = 0;
-                    BackgroundColor3 = rgb(0, 0, 0)
-                });
-                
-                local ui_title = library:create("TextLabel", {
-                    FontFace = fonts["TahomaBold"];
-                    TextColor3 = rgb(255, 255, 255);
-                    BorderColor3 = rgb(0, 0, 0);
-                    Text = cfg.name;
-                    Parent = title_holder;
-                    BackgroundTransparency = 1;
-                    Size = dim2(1, -12, 1, 0);
-                    Position = dim2(0, 6, 0, 0);
-                    TextXAlignment = Enum.TextXAlignment.Left;
-                    BorderSizePixel = 0;
-                    TextSize = 12;
-                    BackgroundColor3 = rgb(255, 255, 255)
-                });
-                
                 library.gradient = library:create("UIGradient", {
                     Color = rgbseq{
                         rgbkey(0, themes.preset["1"]), 
@@ -585,7 +564,7 @@
                     AnchorPoint = vec2(0, 0);
                     Parent = window_outline;
                     BackgroundTransparency = 0.4;
-                    Position = dim2(0, 2, 0, 22);
+                    Position = dim2(0, 2, 0, 2);
                     BorderColor3 = rgb(0, 0, 0);
                     Size = dim2(1, -4, 0, 22);
                     BorderSizePixel = 0;
@@ -648,9 +627,9 @@
                     local Page = library:create("Frame", {
                         Parent = self.main_outline;
                         BackgroundTransparency = 0.15;
-                        Position = dim2(0, 2, 0, 46);
+                        Position = dim2(0, 2, 0, 26);
                         BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(1, -4, 1, -48);
+                        Size = dim2(1, -4, 1, -28);
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(0, 0, 0),
                         Visible = false,
@@ -967,8 +946,8 @@
                     ClipsDescendants = true;
                     BorderColor3 = rgb(0, 0, 0);
                     BorderSizePixel = 0;
-                    BackgroundColor3 = themes.preset[tostring(self.count)]
-                }); library:apply_theme(accent, tostring(self.count), "BackgroundColor3");
+                    BackgroundColor3 = themes.preset.border
+                }); library:apply_theme(accent, "border", "BackgroundColor3");
 
                 local dark = library:create("Frame", {
                     Parent = accent;
@@ -1037,6 +1016,133 @@
         end 
 
         -- Elements  
+            function library:tabs(options)
+                local names = options.names or options.items or options
+                local tabs = {}
+                local selected
+
+                -- Instances
+                    local holder = library:create("Frame", {
+                        Parent = self.elements;
+                        BackgroundTransparency = 1;
+                        BorderColor3 = rgb(0, 0, 0);
+                        Size = dim2(1, 0, 0, 18);
+                        BorderSizePixel = 0;
+                        BackgroundColor3 = rgb(255, 255, 255)
+                    });
+
+                    local line = library:create("Frame", {
+                        AnchorPoint = vec2(0, 1);
+                        Parent = holder;
+                        Position = dim2(0, 0, 1, 0);
+                        Size = dim2(1, 0, 0, 1);
+                        BorderColor3 = rgb(0, 0, 0);
+                        BorderSizePixel = 0;
+                        BackgroundColor3 = themes.preset.border
+                    }); library:apply_theme(line, "border", "BackgroundColor3")
+
+                    local buttons = library:create("Frame", {
+                        Parent = holder;
+                        BackgroundTransparency = 1;
+                        BorderColor3 = rgb(0, 0, 0);
+                        Size = dim2(1, 0, 1, 0);
+                        BorderSizePixel = 0;
+                        BackgroundColor3 = rgb(255, 255, 255)
+                    });
+
+                    library:create("UIListLayout", {
+                        FillDirection = Enum.FillDirection.Horizontal;
+                        HorizontalFlex = Enum.UIFlexAlignment.Fill;
+                        VerticalFlex = Enum.UIFlexAlignment.Fill;
+                        Parent = buttons;
+                        SortOrder = Enum.SortOrder.LayoutOrder
+                    });
+
+                    for index = 1, #names do
+                        local name = names[index]
+
+                        local button = library:create("TextButton", {
+                            FontFace = fonts["ProggyClean"];
+                            TextColor3 = rgb(138, 138, 145);
+                            BorderColor3 = rgb(0, 0, 0);
+                            Text = name;
+                            Parent = buttons;
+                            AutoButtonColor = false;
+                            BackgroundTransparency = 1;
+                            BorderSizePixel = 0;
+                            TextSize = 12;
+                            BackgroundColor3 = rgb(255, 255, 255)
+                        });
+
+                        local underline = library:create("Frame", {
+                            AnchorPoint = vec2(0, 1);
+                            Parent = button;
+                            Position = dim2(0, 0, 1, 0);
+                            Size = dim2(1, 0, 0, 1);
+                            BorderColor3 = rgb(0, 0, 0);
+                            BorderSizePixel = 0;
+                            Visible = false;
+                            BackgroundColor3 = themes.preset[tostring(self.count)]
+                        }); library:apply_theme(underline, tostring(self.count), "BackgroundColor3")
+
+                        local elements = library:create("Frame", {
+                            Parent = self.elements;
+                            BackgroundTransparency = 1;
+                            BorderColor3 = rgb(0, 0, 0);
+                            Size = dim2(1, 0, 0, 0);
+                            BorderSizePixel = 0;
+                            Visible = false;
+                            AutomaticSize = Enum.AutomaticSize.Y;
+                            BackgroundColor3 = rgb(255, 255, 255)
+                        });
+
+                        library:create("UIListLayout", {
+                            Parent = elements;
+                            Padding = dim(0, 6);
+                            SortOrder = Enum.SortOrder.LayoutOrder
+                        });
+
+                        local tab = setmetatable({
+                            name = name,
+                            elements = elements,
+                            button = button,
+                            underline = underline,
+                            count = self.count,
+                            color = self.color
+                        }, library)
+
+                        function tab.open_tab()
+                            if selected then
+                                selected.elements.Visible = false
+                                selected.button.TextColor3 = rgb(138, 138, 145)
+                                selected.button.BackgroundTransparency = 1
+                                selected.underline.Visible = false
+                            end
+
+                            elements.Visible = true
+                            button.TextColor3 = rgb(255, 255, 255)
+                            button.BackgroundTransparency = 0.92
+                            underline.Visible = true
+
+                            selected = tab
+                        end
+
+                        button.MouseButton1Click:Connect(function()
+                            tab.open_tab()
+                        end)
+
+                        if not selected then
+                            tab.open_tab()
+                        end
+
+                        tabs[index] = tab
+                        tabs[name] = tab
+                    end
+                --
+
+                return tabs
+            end
+
             function library:toggle(options) 
                 local cfg = {
                     enabled = options.enabled or nil,
@@ -1184,8 +1290,8 @@
                         Size = dim2(1, 0, 0, cfg.scale);
                         BorderSizePixel = 0;
                         AutomaticSize = Enum.AutomaticSize.Y;
-                        BackgroundColor3 = themes.preset[tostring(self.count)]
-                    }); library:apply_theme(accent, tostring(self.count), "BackgroundColor3")
+                        BackgroundColor3 = themes.preset.border
+                    }); library:apply_theme(accent, "border", "BackgroundColor3")
                     
                     local inline = library:create("Frame", {
                         Parent = accent;
@@ -1354,8 +1460,8 @@
                         BorderColor3 = rgb(0, 0, 0);
                         Size = dim2(1, 0, 0, 12);
                         BorderSizePixel = 0;
-                        BackgroundColor3 = themes.preset[tostring(self.count)]
-                    }); library:apply_theme(outline, tostring(self.count), "BackgroundColor3")
+                        BackgroundColor3 = themes.preset.border
+                    }); library:apply_theme(outline, "border", "BackgroundColor3")
                     
                     local inline = library:create("Frame", {
                         Parent = outline;
@@ -1480,8 +1586,8 @@
                             BorderColor3 = rgb(0, 0, 0);
                             Size = dim2(0.5, 0, 0, 16);
                             BorderSizePixel = 0;
-                            BackgroundColor3 = themes.preset[tostring(self.count)]
-                        }); library:apply_theme(dropdown_holder, tostring(self.count), "BackgroundColor3")
+                            BackgroundColor3 = themes.preset.border
+                        }); library:apply_theme(dropdown_holder, "border", "BackgroundColor3")
                         
                         local inline = library:create("Frame", {
                             Parent = dropdown_holder;
@@ -1533,8 +1639,8 @@
                             BorderSizePixel = 0;
                             Visible = false;
                             AutomaticSize = Enum.AutomaticSize.Y;
-                            BackgroundColor3 = themes.preset[tostring(self.count)]
-                        });	library:apply_theme(accent, tostring(self.count), "BackgroundColor3")
+                            BackgroundColor3 = themes.preset.border
+                        });	library:apply_theme(accent, "border", "BackgroundColor3")
 
                         local inline = library:create("Frame", {
                             Parent = accent;
@@ -1713,8 +1819,8 @@
                             BorderColor3 = rgb(0, 0, 0);
                             Size = dim2(0, 30, 0, 12);
                             BorderSizePixel = 0;
-                            BackgroundColor3 = themes.preset[tostring(self.count)]
-                        }); library:apply_theme(accent, tostring(self.count), "BackgroundColor3")
+                            BackgroundColor3 = themes.preset.border
+                        }); library:apply_theme(accent, "border", "BackgroundColor3")
                         
                         local colorpicker_element_color = library:create("Frame", {
                             Parent = accent;
@@ -1751,16 +1857,16 @@
                             Visible = false;
                             Size = dim2(0, 150, 0, 150);
                             BorderSizePixel = 0;
-                            BackgroundColor3 = themes.preset[tostring(self.count)]
-                        });	library:apply_theme(colorpicker, tostring(self.count), "BackgroundColor3")
+                            BackgroundColor3 = themes.preset.border
+                        });	library:apply_theme(colorpicker, "border", "BackgroundColor3")
 
                         local a = library:create("Frame", {
                             Parent = colorpicker;
                             BorderColor3 = rgb(0, 0, 0);
                             Size = dim2(1, 0, 1, 0);
                             BorderSizePixel = 0;
-                            BackgroundColor3 = themes.preset[tostring(self.count)]
-                        }); library:apply_theme(a, tostring(self.count), "BackgroundColor3")
+                            BackgroundColor3 = themes.preset.border
+                        }); library:apply_theme(a, "border", "BackgroundColor3")
                         
                         local e = library:create("Frame", {
                             Parent = a;
@@ -1787,8 +1893,8 @@
                             BorderColor3 = rgb(0, 0, 0);
                             Size = dim2(1, -1, 0, 16);
                             BorderSizePixel = 0;
-                            BackgroundColor3 = themes.preset[tostring(self.count)]
-                        }); library:apply_theme(textbox_holder, tostring(self.count), "BackgroundColor3")
+                            BackgroundColor3 = themes.preset.border
+                        }); library:apply_theme(textbox_holder, "border", "BackgroundColor3")
                         
                         local textbox = library:create("TextBox", {
                             FontFace = fonts["ProggyClean"];
@@ -2104,8 +2210,8 @@
                         BorderColor3 = rgb(0, 0, 0);
                         Size = dim2(1, 0, 0, 16);
                         BorderSizePixel = 0;
-                        BackgroundColor3 = themes.preset[tostring(self.count)]
-                    }); library:apply_theme(frame, tostring(self.count), "BackgroundColor3")
+                        BackgroundColor3 = themes.preset.border
+                    }); library:apply_theme(frame, "border", "BackgroundColor3")
                     
                     local frame_inline = library:create("Frame", {
                         Parent = frame;
@@ -2199,8 +2305,8 @@
                             BorderColor3 = rgb(0, 0, 0);
                             Size = dim2(0.5, 0, 0, 16);
                             BorderSizePixel = 0;
-                            BackgroundColor3 = themes.preset[tostring(self.count)]
-                        }); library:apply_theme(keybind_holder, tostring(self.count), "BackgroundColor3")
+                            BackgroundColor3 = themes.preset.border
+                        }); library:apply_theme(keybind_holder, "border", "BackgroundColor3")
                         
                         local inline = library:create("Frame", {
                             Parent = keybind_holder;
@@ -2252,8 +2358,8 @@
                             BorderColor3 = rgb(0, 0, 0);
                             BorderSizePixel = 0;
                             AutomaticSize = Enum.AutomaticSize.Y;
-                            BackgroundColor3 = themes.preset[tostring(self.count)]
-                        });	library:apply_theme(accent, tostring(self.count), "BackgroundColor3")
+                            BackgroundColor3 = themes.preset.border
+                        });	library:apply_theme(accent, "border", "BackgroundColor3")
 
                         local inline = library:create("Frame", {
                             Parent = accent;
@@ -2476,8 +2582,8 @@
                         BorderColor3 = rgb(0, 0, 0);
                         Size = dim2(1, 0, 0, 16);
                         BorderSizePixel = 0;
-                        BackgroundColor3 = themes.preset[tostring(self.count)]
-                    }); library:apply_theme(frame, tostring(self.count), "BackgroundColor3")
+                        BackgroundColor3 = themes.preset.border
+                    }); library:apply_theme(frame, "border", "BackgroundColor3")
                     
                     local frame_inline = library:create("Frame", {
                         Parent = frame;
@@ -2524,8 +2630,10 @@
                 section:button({name = "Delete", callback = function() delfile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg")  library:update_config_list() end})
 
                 local section = main:column({}):section({name = "Other", size = 1, default = true})
-                section:keybind({name = "Menu bind", callback = function(bool) window.toggle_menu(bool) end, default = true})
-                section:colorpicker({name = "Gradient 1", callback = function(color)                    
+                local sub = section:tabs({"Menu", "Colors"})
+
+                sub.Menu:keybind({name = "Menu bind", callback = function(bool) window.toggle_menu(bool) end, default = true})
+                sub.Colors:colorpicker({name = "Gradient 1", callback = function(color)                    
                     library:update_theme("1", color)
 
                     library.gradient.Color = rgbseq{
@@ -2538,7 +2646,7 @@
                         rgbkey(1, themes.preset["2"]),
                     };
                 end, color = themes.preset["1"]})
-                section:colorpicker({name = "Gradient 2", callback = function(color)
+                sub.Colors:colorpicker({name = "Gradient 2", callback = function(color)
                     library:update_theme("2", color)
 
                     library.gradient.Color = rgbseq{
