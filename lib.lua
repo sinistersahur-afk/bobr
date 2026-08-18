@@ -83,13 +83,13 @@
     
     local themes = {
         preset = {
-            outline = rgb(8, 8, 10),
-            inline = rgb(32, 32, 38),
-            text = rgb(198, 198, 205),
+            outline = rgb(6, 6, 9),
+            inline = rgb(26, 26, 33),
+            text = rgb(196, 196, 206),
             text_outline = rgb(0, 0, 0),
-            background = rgb(16, 16, 19),
-            ["1"] = hex("#6D5DF6"), 
-            ["2"] = hex("#2AA8FF"),
+            background = rgb(13, 13, 17),
+            ["1"] = hex("#FF4B7D"),
+            ["2"] = hex("#C45CFF"),
         },
 
         utility = {
@@ -549,10 +549,10 @@
                 
                 local title_holder = library:create("Frame", {
                     Parent = window_outline;
-                    BackgroundTransparency = 0.65;
+                    BackgroundTransparency = 0.25;
                     Position = dim2(0, 2, 0, 2);
                     BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -4, 0, 20);
+                    Size = dim2(1, -4, 0, 18);
                     BorderSizePixel = 0;
                     BackgroundColor3 = rgb(0, 0, 0)
                 });
@@ -582,12 +582,12 @@
                 });
                 
                 local tab_button_holder = library:create("Frame", {
-                    AnchorPoint = vec2(0, 1);
+                    AnchorPoint = vec2(0, 0);
                     Parent = window_outline;
-                    BackgroundTransparency = 0.65;
-                    Position = dim2(0, 2, 1, -2);
+                    BackgroundTransparency = 0.4;
+                    Position = dim2(0, 2, 0, 22);
                     BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -4, 0, 20);
+                    Size = dim2(1, -4, 0, 22);
                     BorderSizePixel = 0;
                     BackgroundColor3 = rgb(0, 0, 0)
                 }); cfg.tab_button_holder = tab_button_holder
@@ -630,13 +630,25 @@
                         TextSize = 12;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
-                -- 
+
+                    local tab_underline = library:create("Frame", {
+                        Name = "underline";
+                        Parent = tab_button;
+                        AnchorPoint = vec2(0, 1);
+                        Position = dim2(0, 0, 1, 0);
+                        Size = dim2(1, 0, 0, 1);
+                        BorderColor3 = rgb(0, 0, 0);
+                        BorderSizePixel = 0;
+                        Visible = false;
+                        BackgroundColor3 = themes.preset["1"]
+                    }); library:apply_theme(tab_underline, "1", "BackgroundColor3")
+                --
 
                 -- Page
                     local Page = library:create("Frame", {
                         Parent = self.main_outline;
-                        BackgroundTransparency = 0.5;
-                        Position = dim2(0, 2, 0, 24);
+                        BackgroundTransparency = 0.15;
+                        Position = dim2(0, 2, 0, 46);
                         BorderColor3 = rgb(0, 0, 0);
                         Size = dim2(1, -4, 1, -48);
                         BorderSizePixel = 0;
@@ -666,16 +678,24 @@
             function cfg.open_tab() 
                 local selected_tab = self.selected_tab
                 
-                if selected_tab then 
-                    selected_tab[1].Visible = false 
+                if selected_tab then
+                    selected_tab[1].Visible = false
                     selected_tab[2].TextColor3 = rgb(138, 138, 145)
+                    selected_tab[2].BackgroundTransparency = 1
 
-                    selected_tab = nil 
+                    local previous_underline = selected_tab[2]:FindFirstChild("underline")
+
+                    if previous_underline then
+                        previous_underline.Visible = false
+                    end
+
+                    selected_tab = nil
                 end
 
                 Page.Visible = true
                 tab_button.TextColor3 = rgb(255, 255, 255)
-
+                tab_button.BackgroundTransparency = 0.92
+                tab_underline.Visible = true
                 self.selected_tab = {Page, tab_button}
             end
 
@@ -952,19 +972,19 @@
 
                 local dark = library:create("Frame", {
                     Parent = accent;
-                    BackgroundTransparency = 0.6;
-                    Position = dim2(0, 2, 0, 16);
+                    BackgroundTransparency = 0.15;
+                    Position = dim2(0, 1, 0, 1);
                     BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -4, 1, -18);
+                    Size = dim2(1, -2, 1, -2);
                     BorderSizePixel = 0;
                     BackgroundColor3 = rgb(0, 0, 0)
                 });
                 
                 local elements = library:create("Frame", {
                     Parent = dark;
-                    Position = dim2(0, 4, 0, 5);
+                    Position = dim2(0, 7, 0, 20);
                     BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(1, -8, 0, 0);
+                    Size = dim2(1, -14, 0, 0);
                     BackgroundTransparency = 1;
                     BorderSizePixel = 0;
                     BackgroundColor3 = rgb(255, 255, 255)
@@ -978,7 +998,7 @@
                     local UIPadding = library:create("UIPadding", {
                         Parent = elements,
                         Name = "",
-                        PaddingBottom = dim(0, 7)
+                        PaddingBottom = dim(0, 8)
                     })
                 else 
                     accent.Size = dim2(1, 0, cfg.size, 0);
@@ -997,7 +1017,7 @@
                     Text = cfg.name;
                     Parent = accent;
                     Size = dim2(1, 0, 0, 0);
-                    Position = dim2(0, 4, 0, 2);
+                    Position = dim2(0, 7, 0, 4);
                     BackgroundTransparency = 1;
                     TextXAlignment = Enum.TextXAlignment.Left;
                     BorderSizePixel = 0;
@@ -1050,7 +1070,7 @@
                             Text = cfg.name;
                             Parent = toggle;
                             Size = dim2(1, 0, 1, 0);
-                            Position = dim2(0, 1, 0, -1);
+                            Position = dim2(0, 19, 0, -1);
                             BackgroundTransparency = 1;
                             TextXAlignment = Enum.TextXAlignment.Left;
                             BorderSizePixel = 0;
@@ -1060,11 +1080,11 @@
                         }); 
                         
                         local accent = library:create("Frame", {
-                            AnchorPoint = vec2(1, 0);
+                            AnchorPoint = vec2(0, 0);
                             Parent = toggle;
-                            Position = dim2(1, 0, 0, 0);
+                            Position = dim2(0, 0, 0, 0);
                             BorderColor3 = rgb(0, 0, 0);
-                            Size = dim2(0, 12, 0, 12);
+                            Size = dim2(0, 11, 0, 11);
                             BorderSizePixel = 0;
                             BackgroundColor3 = themes.preset[tostring(self.count)]
                         }); library:apply_theme(accent, tostring(self.count), "BackgroundColor3");    
@@ -1353,9 +1373,24 @@
                         BorderSizePixel = 0;
                         BackgroundColor3 = themes.preset[tostring(self.count)]
                     }); library:apply_theme(accent, tostring(self.count), "BackgroundColor3")
-                -- 
-                
-                -- Functions 
+
+                    local value_label = library:create("TextLabel", {
+                        FontFace = fonts["ProggyClean"];
+                        TextColor3 = rgb(255, 255, 255);
+                        BorderColor3 = rgb(0, 0, 0);
+                        Text = "";
+                        Parent = inline;
+                        Size = dim2(1, -4, 1, 0);
+                        Position = dim2(0, 2, 0, -1);
+                        BackgroundTransparency = 1;
+                        TextXAlignment = Enum.TextXAlignment.Right;
+                        BorderSizePixel = 0;
+                        TextSize = 12;
+                        BackgroundColor3 = rgb(255, 255, 255)
+                    });
+                --
+
+                -- Functions
                     function cfg.set(value)
                         local valuee = tonumber(value)
 
@@ -1366,7 +1401,8 @@
                         cfg.value = clamp(library:round(valuee, cfg.intervals), cfg.min, cfg.max)
 
                         accent.Size = dim2((cfg.value - cfg.min) / (cfg.max - cfg.min), 0, 1, 0)
-                        eeeee.Text = cfg.name ..  "<font color='#AAAAAA'>" .. ' - ' .. tostring(cfg.value) .. cfg.suffix .. "</font>"
+                        eeeee.Text = cfg.name
+                        value_label.Text = tostring(cfg.value) .. cfg.suffix
                         
                         flags[cfg.flag] = cfg.value
 
